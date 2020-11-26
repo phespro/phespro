@@ -26,6 +26,14 @@ class Kernel
         $this->container->add('config', fn() => $config);
 
         $this->container->addFactory('router', fn() => new Router);
+
+        $this->container->addFactory('cli_application', function(Container $c) {
+            $app = new Application('Phespro CLI');
+            foreach ($c->getByTag('cli_command') as $command) {
+                $app->add($command);
+            }
+            return $app;
+        });
     }
 
     public function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface
@@ -58,10 +66,8 @@ class Kernel
      */
     public function handleCli(InputInterface $input = null, OutputInterface $output = null): void
     {
-        $app = new Application('Phespro Console');
-        foreach ($this->container->getByTag('cli_command') as $command) {
-            $app->add($command);
-        }
+        $app = $this->container->get('cli_application');
+        assert($app instanceof Application);
         $app->run($input, $output);
     }
 
