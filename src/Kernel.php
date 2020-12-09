@@ -7,6 +7,10 @@ namespace Phespro\Phespro;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Router;
 use Phespro\Container\Container;
+use Phespro\Phespro\Migration\CliMigrator;
+use Phespro\Phespro\Migration\CliMigratorInterface;
+use Phespro\Phespro\Migration\Commands\ApplyAllCommand;
+use Phespro\Phespro\Migration\MigrationStateStorageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Console\Application;
@@ -25,15 +29,26 @@ class Kernel
 
         $this->container->add('config', fn() => $config);
 
-        $this->container->addFactory('router', fn() => new Router);
+        $this->container->add('router', fn() => new Router);
 
-        $this->container->addFactory('cli_application', function(Container $c) {
+        $this->container->add('cli_application', function(Container $c) {
             $app = new Application('Phespro CLI');
             foreach ($c->getByTag('cli_command') as $command) {
                 $app->add($command);
             }
             return $app;
         });
+
+        $this->container->add(CliMigratorInterface::class, fn(Container $c) => new CliMigrator(
+            $c->get(MigrationStateStorageInterface::class),
+            $c->getByTag('migration'),
+        ));
+
+        $this->container->add(
+            ApplyAllCommand::class,
+            fn(Container $c) => new ApplyAllCommand($c->get(CliMigratorInterface::class)),
+            ['cli_command']
+        );
     }
 
     public function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface

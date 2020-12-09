@@ -3,10 +3,9 @@
     "description": "An opinionated minimalistic and cache free open source PHP framework.",
     "type": "library",
     "require": {
-        "php": "~7.4.0",
+        "php": "~8.0.0",
         "phespro/container": "dev-main",
         "symfony/console": "^5.1",
-        "mschop/notee": "dev-master",
         "league/route": "^4.5",
         "laminas/laminas-diactoros": "^2.5",
         "laminas/laminas-httphandlerrunner": "^1.3"
