@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3d41ab2fc434133d16de2e9a3eb5c7f",
+    "content-hash": "84878a8b42ecdeaba46a6954eaaaaee0",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -385,6 +385,58 @@
                 }
             ],
             "time": "2020-05-18T07:34:43+00:00"
+        },
+        {
+            "name": "mschop/notee",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/mschop/notee.git",
+                "reference": "b5e81069ac5613c7eb1cdfde3668bc3ff66e328e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/mschop%2Fnotee/repository/archive.zip?sha=b5e81069ac5613c7eb1cdfde3668bc3ff66e328e",
+                "reference": "b5e81069ac5613c7eb1cdfde3668bc3ff66e328e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "infection/infection": "^0.20.2",
+                "phpunit/phpunit": "^8.3"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NoTee\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "mschop",
+                    "email": "mschopdev@gmail.com"
+                }
+            ],
+            "description": "html5 generation library",
+            "keywords": [
+                "dom",
+                "engine",
+                "html",
+                "template"
+            ],
+            "support": {
+                "docs": "https://notee.readthedocs.io",
+                "email": "mschopdev@gmail.com",
+                "issues": "https://gitlab.com/mschop/notee/issues"
+            },
+            "time": "2020-12-09T21:08:38+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -4527,7 +4579,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "phespro/container": 20
+        "phespro/container": 20,
+        "mschop/notee": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

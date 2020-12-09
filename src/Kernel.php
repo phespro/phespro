@@ -6,6 +6,8 @@ namespace Phespro\Phespro;
 
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Router;
+use NoTee\NoTee;
+use NoTee\NoTeeInterface;
 use Phespro\Container\Container;
 use Phespro\Phespro\Migration\CliMigrator;
 use Phespro\Phespro\Migration\CliMigratorInterface;
@@ -48,6 +50,24 @@ class Kernel
             ApplyAllCommand::class,
             fn(Container $c) => new ApplyAllCommand($c->get(CliMigratorInterface::class)),
             ['cli_command']
+        );
+
+        $this->container->add(
+            'template_dirs',
+            fn() => [],
+        );
+
+        $this->container->add(
+            'template_context',
+            fn() => [],
+        );
+
+        $this->container->add(
+            NoTeeInterface::class,
+            fn(Container $c) => NoTee::create(
+                templateDirs: $c->get('template_dirs'),
+                defaultContext: $c->get('template_context'),
+            )
         );
     }
 
