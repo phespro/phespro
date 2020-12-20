@@ -69,6 +69,8 @@ class Kernel
                 defaultContext: $c->get('template_context'),
             )
         );
+
+        $this->container->add(LazyActionResolver::class, fn(Container $c) => new LazyActionResolver($c));
     }
 
     public function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface
