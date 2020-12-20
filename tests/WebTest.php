@@ -7,12 +7,23 @@ namespace Phespro\Phespro\Tests;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\Route\Router;
+use Phespro\Container\Container;
 use Phespro\Phespro\Kernel;
 use Phespro\Phespro\PluginInterface;
 use PHPUnit\Framework\TestCase;
 
 class TestPlugin implements PluginInterface
 {
+    static function getPluginFactoryFunction(): callable
+    {
+        return fn() => new static;
+    }
+
+    function initializeContainer(Container $container): void
+    {
+
+    }
+
     function initializeWeb(Router $router): void
     {
         $router->get('/', function() {
@@ -33,7 +44,7 @@ class WebTest extends TestCase
     {
         $kernel = new Kernel([]);
 
-        $kernel->getContainer()->add(TestPlugin::class, fn() => new TestPlugin, ['plugin']);
+        $kernel->addPlugin(TestPlugin::class);
 
         $response = $kernel->handleWebRequest(
             false,

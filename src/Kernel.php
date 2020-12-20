@@ -73,6 +73,16 @@ class Kernel
         $this->container->add(LazyActionResolver::class, fn(Container $c) => new LazyActionResolver($c));
     }
 
+    public function addPlugin(string $class): void
+    {
+        $plugin = $class::getPluginFactoryFunction()($this->container);
+        if (!$plugin instanceof PluginInterface) {
+            throw new \InvalidArgumentException("Class '$class' does not implement " . PluginInterface::class);
+        }
+        $plugin->initializeContainer($this->container);
+        $this->container->add($class, fn() => $plugin, ['plugin']);
+    }
+
     public function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface
     {
         $router = $this->container->get('router');
