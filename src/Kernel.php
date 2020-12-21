@@ -64,10 +64,14 @@ class Kernel
 
         $this->container->add(
             NoTeeInterface::class,
-            fn(Container $c) => NoTee::create(
-                templateDirs: $c->get('template_dirs'),
-                defaultContext: $c->get('template_context'),
-            )
+            function(Container $c) {
+                $noTee = NoTee::create(
+                    templateDirs: $c->get('template_dirs'),
+                    defaultContext: $c->get('template_context'),
+                );
+                $noTee->enableGlobal();
+                return $noTee;
+            }
         );
 
         $this->container->add(LazyActionResolver::class, fn(Container $c) => new LazyActionResolver($c));
