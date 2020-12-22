@@ -46,5 +46,7 @@ class Migration$id implements MigrationInterface
 ";
 
         $output->write($code);
+
+        return 0;
     }
 }
