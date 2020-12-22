@@ -12,6 +12,7 @@ use Phespro\Container\Container;
 use Phespro\Phespro\Migration\CliMigrator;
 use Phespro\Phespro\Migration\CliMigratorInterface;
 use Phespro\Phespro\Migration\Commands\ApplyAllCommand;
+use Phespro\Phespro\Migration\Commands\CreateCommand;
 use Phespro\Phespro\Migration\MigrationStateStorageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -56,6 +57,12 @@ class Kernel
             ApplyAllCommand::class,
             fn(Container $c) => new ApplyAllCommand($c->get(CliMigratorInterface::class)),
             ['cli_command']
+        );
+
+        $this->container->add(
+            CreateCommand::class,
+            fn() => new CreateCommand,
+            ['cli_command'],
         );
 
         $this->container->add(
