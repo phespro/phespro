@@ -75,7 +75,6 @@ class Kernel
                     templateDirs: $c->get('template_dirs'),
                     defaultContext: $c->get('template_context'),
                 );
-//                $noTee->enableGlobal();
                 return $noTee;
             }
         );
