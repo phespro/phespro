@@ -15,6 +15,8 @@ use Phespro\Phespro\Migration\Commands\ApplyAllCommand;
 use Phespro\Phespro\Migration\MigrationStateStorageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,11 +27,15 @@ class Kernel
 {
     private Container $container;
 
-    public function __construct(array $config)
+    public function __construct()
     {
         $this->container = new Container;
 
-        $this->container->add('config', fn() => $config);
+        $this->container->add('config', fn() => [
+            'debug' => [
+                'displayErrorDetails' => false,
+            ]
+        ]);
 
         $this->container->add('router', fn() => new Router);
 
@@ -69,12 +75,23 @@ class Kernel
                     templateDirs: $c->get('template_dirs'),
                     defaultContext: $c->get('template_context'),
                 );
-                $noTee->enableGlobal();
+//                $noTee->enableGlobal();
                 return $noTee;
             }
         );
 
         $this->container->add(LazyActionResolver::class, fn(Container $c) => new LazyActionResolver($c));
+
+        $this->container->add(
+            ErrorHandlerMiddleware::class,
+            fn(Container $c) => new ErrorHandlerMiddleware(
+                $c->get(LoggerInterface::class),
+                $c->get('config')['debug']['displayErrorDetails'],
+                $c->get(NoTeeInterface::class),
+            ),
+        );
+
+        $this->container->add(LoggerInterface::class, fn() => new NullLogger);
     }
 
     public function addPlugin(string $class): void
@@ -97,6 +114,7 @@ class Kernel
             }
             $plugin->initializeWeb($router);
         }
+        $router->middleware($this->container->get(ErrorHandlerMiddleware::class)); // error handler needs to be the most outer middleware
         if ($request === null) {
             $request = ServerRequestFactory::fromGlobals(
                 $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
