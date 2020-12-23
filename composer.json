@@ -10,7 +10,8 @@
         "laminas/laminas-diactoros": "^2.5",
         "laminas/laminas-httphandlerrunner": "^1.3",
         "mschop/notee": "dev-master",
-        "psr/log": "^1.1"
+        "psr/log": "^1.1",
+        "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": {
