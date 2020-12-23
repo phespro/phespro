@@ -17,8 +17,8 @@ class CreateCommand extends Command
         $this->setName('migration:create');
         $this->setDescription('Create migration in directory');
 
-        $this->addOption('directory', 'd', InputArgument::REQUIRED, 'Where should the migration file be created?', getcwd());
-        $this->addOption('namespace', 'n', InputArgument::REQUIRED, 'Namespace of the generated class');
+        $this->addOption('directory', 'd', InputOption::VALUE_REQUIRED, 'Where should the migration file be created?', getcwd());
+        $this->addOption('namespace', 'n', InputOption::VALUE_REQUIRED, 'Namespace of the generated class');
         $this->addOption('description', 'e', InputOption::VALUE_OPTIONAL, 'Description of the migration', '');
     }
 
