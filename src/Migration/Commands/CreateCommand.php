@@ -27,7 +27,7 @@ class CreateCommand extends Command
         $namespace = $input->getOption('namespace');
         $description = $input->getOption('description');
         $description = str_replace("'", '\\\'', $description);
-        $id = (new \DateTimeImmutable())->format('YmdHisu') . random_int(0, 9) . random_int(0, 9) . random_int(0, 9));
+        $id = (new \DateTimeImmutable())->format('YmdHisu') . random_int(0, 9) . random_int(0, 9) . random_int(0, 9);
         $className = "Migration$id";
 
         $code = "<?php
