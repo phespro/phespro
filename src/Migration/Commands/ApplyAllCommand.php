@@ -19,7 +19,6 @@ class ApplyAllCommand extends Command
         $this->cliMigrator = $cliMigrator;
     }
 
-
     protected function configure()
     {
         $this->setName('migration:apply_all');
@@ -31,5 +30,4 @@ class ApplyAllCommand extends Command
 
         return 0;
     }
-
 }
