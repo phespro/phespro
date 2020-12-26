@@ -31,7 +31,7 @@ class ErrorHandlerTestPlugin implements PluginInterface
     }
 }
 
-class ErrorHandlerMiddlewareTest extends TestCase
+class ErrorHandlingTest extends TestCase
 {
     /**
      * @throws \Phespro\Container\ServiceNotFoundException
@@ -44,7 +44,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $kernel->getContainer()->decorate('config', fn($container, $prev) => array_replace_recursive($prev(), [
             'debug' => [
                 'displayErrorDetails' => true,
-            ]
+            ],
         ]));
         $response = $kernel->handleWebRequest(false, (new ServerRequestFactory)->createServerRequest('GET', '/'));
         $this->assertEquals(500, $response->getStatusCode());

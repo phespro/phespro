@@ -97,6 +97,14 @@ class Kernel
             ),
         );
 
+        $this->container->add(
+            WebRequestErrorHandlerInterface::class,
+            fn(Container $c) => new WebRequestErrorHandler(
+                $c->get(LoggerInterface::class),
+                $c->get('config')['debug']['displayErrorDetails'],
+            )
+        );
+
         $this->container->add(LoggerInterface::class, fn() => new NullLogger);
     }
 
@@ -112,23 +120,32 @@ class Kernel
 
     public function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface
     {
-        $router = $this->container->get('router');
-        assert($router instanceof Router);
-        foreach($this->container->getByTag('plugin') as $plugin) {
-            if (!$plugin instanceof PluginInterface) {
-                throw new \Exception("Invalid plugin. Plugins must implement interface " . PluginInterface::class);
+        try {
+            $router = $this->container->get('router');
+            assert($router instanceof Router);
+            foreach($this->container->getByTag('plugin') as $plugin) {
+                if (!$plugin instanceof PluginInterface) {
+                    throw new \Exception("Invalid plugin. Plugins must implement interface " . PluginInterface::class);
+                }
+                $plugin->initializeWeb($router);
             }
-            $plugin->initializeWeb($router);
-        }
-        $router->middleware($this->container->get(ErrorHandlerMiddleware::class)); // error handler needs to be the most outer middleware
-        if ($request === null) {
-            $request = ServerRequestFactory::fromGlobals(
-                $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
-            );
-        }
-        $response = $router->dispatch($request);
-        if ($emit) {
-            (new SapiEmitter)->emit($response);
+            if ($request === null) {
+                $request = ServerRequestFactory::fromGlobals(
+                    $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
+                );
+            }
+            $response = $router->dispatch($request);
+            if ($emit) {
+                (new SapiEmitter)->emit($response);
+            }
+        } catch (\Throwable $err) {
+            $handler = $this->container->get(WebRequestErrorHandlerInterface::class);
+            assert($handler instanceof WebRequestErrorHandlerInterface);
+            $response = $handler->handle($err);
+            if ($emit) {
+                (new SapiEmitter)->emit($response);
+            }
+
         }
         return $response;
     }
