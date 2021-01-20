@@ -89,15 +89,6 @@ class Kernel
         $this->container->add(LazyActionResolver::class, fn(Container $c) => new LazyActionResolver($c));
 
         $this->container->add(
-            ErrorHandlerMiddleware::class,
-            fn(Container $c) => new ErrorHandlerMiddleware(
-                $c->get(LoggerInterface::class),
-                $c->get('config')['debug']['displayErrorDetails'],
-                $c->get(NoTeeInterface::class),
-            ),
-        );
-
-        $this->container->add(
             WebRequestErrorHandlerInterface::class,
             fn(Container $c) => new WebRequestErrorHandler(
                 $c->get(LoggerInterface::class),
