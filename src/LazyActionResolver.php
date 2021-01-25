@@ -27,9 +27,9 @@ class LazyActionResolver
             throw new ServiceNotFoundException("The service '$serviceTag' does not exist.");
         }
         $container = $this->container;
-        return function(ServerRequestInterface $request) use ($container, $serviceTag) : ResponseInterface {
+        return function(ServerRequestInterface $request, array $args = []) use ($container, $serviceTag) : ResponseInterface {
             $service = $container->get($serviceTag);
-            return $service($request);
+            return $service($request, $args);
         };
     }
 }
