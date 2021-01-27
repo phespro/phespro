@@ -9,6 +9,8 @@ use League\Route\Router;
 use NoTee\NoTee;
 use NoTee\NoTeeInterface;
 use Phespro\Container\Container;
+use Phespro\Phespro\Assets\AssetLocatorInterface;
+use Phespro\Phespro\Assets\NoopAssetLocator;
 use Phespro\Phespro\Migration\CliMigrator;
 use Phespro\Phespro\Migration\CliMigratorInterface;
 use Phespro\Phespro\Migration\Commands\ApplyAllCommand;
@@ -72,7 +74,9 @@ class Kernel
 
         $this->container->add(
             'template_context',
-            fn() => [],
+            fn(Container $c) => [
+                'asset' => fn(string $path) => $c->get(AssetLocatorInterface::class)->get($path),
+            ],
         );
 
         $this->container->add(
@@ -97,6 +101,8 @@ class Kernel
         );
 
         $this->container->add(LoggerInterface::class, fn() => new NullLogger);
+
+        $this->container->add(AssetLocatorInterface::class, fn() => new NoopAssetLocator);
     }
 
     public function addPlugin(string $class): void
