@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractAction implements ActionInterface
 {
-    private function __construct(private NoTeeInterface $noTee)
+    private function __construct(protected NoTeeInterface $noTee)
     {
     }
 
