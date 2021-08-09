@@ -23,9 +23,9 @@ class MigrationTest extends TestCase
 
         $migrationStateStorage = new MemoryMigrationStateStorage();
 
-        $kernel->getContainer()->add(MigrationStateStorageInterface::class, fn() => $migrationStateStorage);
+        $kernel->add(MigrationStateStorageInterface::class, fn() => $migrationStateStorage);
 
-        $kernel->getContainer()->add(
+        $kernel->add(
             'testmigration1',
             fn() => new class implements MigrationInterface
             {
@@ -46,7 +46,7 @@ class MigrationTest extends TestCase
             },
             ['migration']
         );
-        $kernel->getContainer()->add(
+        $kernel->add(
             'testmigration2',
             fn() => new class implements MigrationInterface
             {
@@ -68,7 +68,7 @@ class MigrationTest extends TestCase
             ['migration']
         );
 
-        $commandTester = new CommandTester($kernel->getContainer()->get(ApplyAllCommand::class));
+        $commandTester = new CommandTester($kernel->get(ApplyAllCommand::class));
 
         $commandTester->execute([]);
 

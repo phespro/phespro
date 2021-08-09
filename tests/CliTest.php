@@ -27,7 +27,7 @@ class CliTest extends TestCase
 
         $kernel = new Kernel([]);
 
-        $kernel->getContainer()->add(
+        $kernel->add(
             'testplugin',
             fn() => new class extends Command
             {

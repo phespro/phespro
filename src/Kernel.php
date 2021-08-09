@@ -4,18 +4,25 @@
 namespace Phespro\Phespro;
 
 
+use Exception;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Router;
+use League\Route\Strategy\ApplicationStrategy;
 use NoTee\NoTee;
 use NoTee\NoTeeInterface;
 use Phespro\Container\Container;
+use Phespro\Container\ServiceAlreadyDefinedException;
 use Phespro\Phespro\Assets\AssetLocatorInterface;
 use Phespro\Phespro\Assets\NoopAssetLocator;
+use Phespro\Phespro\Extensibility\ExtensionInterface;
+use Phespro\Phespro\Http\WebRequestErrorHandler;
+use Phespro\Phespro\Http\WebRequestErrorHandlerInterface;
 use Phespro\Phespro\Migration\CliMigrator;
 use Phespro\Phespro\Migration\CliMigratorInterface;
 use Phespro\Phespro\Migration\Commands\ApplyAllCommand;
 use Phespro\Phespro\Migration\Commands\CreateCommand;
 use Phespro\Phespro\Migration\MigrationStateStorageInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -26,105 +33,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 
 
-class Kernel
+class Kernel extends Container
 {
-    private Container $container;
-
-    public function __construct()
+    function __construct(array $extensions)
     {
-        $this->container = new Container;
-
-        $this->container->add('config', fn() => [
-            'debug' => [
-                'displayErrorDetails' => false,
-            ]
-        ]);
-
-        $this->container->add('router', fn() => new Router);
-
-        $this->container->add('cli_application', function(Container $c) {
-            $app = new Application('Phespro CLI');
-            foreach ($c->getByTag('cli_command') as $command) {
-                $app->add($command);
-            }
-            return $app;
-        });
-
-        $this->container->add(CliMigratorInterface::class, fn(Container $c) => new CliMigrator(
-            $c->get(MigrationStateStorageInterface::class),
-            $c->getByTag('migration'),
-        ));
-
-        $this->container->add(
-            ApplyAllCommand::class,
-            fn(Container $c) => new ApplyAllCommand($c->get(CliMigratorInterface::class)),
-            ['cli_command']
-        );
-
-        $this->container->add(
-            CreateCommand::class,
-            fn() => new CreateCommand,
-            ['cli_command'],
-        );
-
-        $this->container->add(
-            'template_dirs',
-            fn() => [],
-        );
-
-        $this->container->add(
-            'template_context',
-            fn(Container $c) => [
-                'asset' => fn(string $path) => $c->get(AssetLocatorInterface::class)->get($path),
-            ],
-        );
-
-        $this->container->add(
-            NoTeeInterface::class,
-            function(Container $c) {
-                $noTee = NoTee::create(
-                    templateDirs: $c->get('template_dirs'),
-                    defaultContext: $c->get('template_context'),
-                );
-                return $noTee;
-            }
-        );
-
-        $this->container->add(LazyActionResolver::class, fn(Container $c) => new LazyActionResolver($c));
-
-        $this->container->add(
-            WebRequestErrorHandlerInterface::class,
-            fn(Container $c) => new WebRequestErrorHandler(
-                $c->get(LoggerInterface::class),
-                $c->get('config')['debug']['displayErrorDetails'],
-            )
-        );
-
-        $this->container->add(LoggerInterface::class, fn() => new NullLogger);
-
-        $this->container->add(AssetLocatorInterface::class, fn() => new NoopAssetLocator);
+        $this->registerFrameworkServices();
+        $this->preBoot($extensions);
+        $this->boot();
     }
 
-    public function addPlugin(string $class): void
-    {
-        $plugin = $class::getPluginFactoryFunction()($this->container);
-        if (!$plugin instanceof PluginInterface) {
-            throw new \InvalidArgumentException("Class '$class' does not implement " . PluginInterface::class);
-        }
-        $plugin->initializeContainer($this->container);
-        $this->container->add($class, fn() => $plugin, ['plugin']);
-    }
-
-    public function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface
+    function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface
     {
         try {
-            $router = $this->container->get('router');
+            $router = $this->get('router');
             assert($router instanceof Router);
-            foreach($this->container->getByTag('plugin') as $plugin) {
-                if (!$plugin instanceof PluginInterface) {
-                    throw new \Exception("Invalid plugin. Plugins must implement interface " . PluginInterface::class);
-                }
-                $plugin->initializeWeb($router);
+            foreach($this->getByTag('extension') as $extension) {
+                assert($extension instanceof ExtensionInterface);
+                $extension->bootHttp($router);
             }
             if ($request === null) {
                 $request = ServerRequestFactory::fromGlobals(
@@ -136,7 +61,7 @@ class Kernel
                 (new SapiEmitter)->emit($response);
             }
         } catch (\Throwable $err) {
-            $handler = $this->container->get(WebRequestErrorHandlerInterface::class);
+            $handler = $this->get(WebRequestErrorHandlerInterface::class);
             assert($handler instanceof WebRequestErrorHandlerInterface);
             $response = $handler->handle($err);
             if ($emit) {
@@ -151,17 +76,112 @@ class Kernel
      * This method should be called from cli php script
      * @param InputInterface|null $input
      * @param OutputInterface|null $output
-     * @throws \Exception
+     * @throws Exception
      */
-    public function handleCli(InputInterface $input = null, OutputInterface $output = null): void
+    function handleCli(InputInterface $input = null, OutputInterface $output = null): void
     {
-        $app = $this->container->get('cli_application');
+        $app = $this->get('cli_application');
         assert($app instanceof Application);
         $app->run($input, $output);
     }
 
-    public function getContainer(): Container
+    public function get($id)
     {
-        return $this->container;
+        return parent::get($id); // TODO: Change the autogenerated stub
+    }
+
+    /**
+     * @param string[] $extensions
+     * @throws ServiceAlreadyDefinedException
+     * @throws Exception
+     */
+    protected function preBoot(array $extensions): void
+    {
+        foreach($extensions as $extension) {
+            assert(is_subclass_of($extension, ExtensionInterface::class));
+            $extension::preBoot($this);
+        }
+    }
+
+    protected function boot(): void
+    {
+        foreach ($this->getByTag('extension') as $extension) {
+            assert($extension instanceof ExtensionInterface);
+            $extension->boot($this);
+        }
+    }
+
+    protected function registerFrameworkServices(): void
+    {
+        $this->add('config', fn() => [
+            'debug' => [
+                'displayErrorDetails' => false,
+            ]
+        ]);
+
+        $this->add('router', function(ContainerInterface $c) {
+            $strategy = (new ApplicationStrategy())->setContainer($c);
+            return (new Router)->setStrategy($strategy);
+        });
+
+        $this->add('cli_application', function(ContainerInterface $c) {
+            $app = new Application('Phespro CLI');
+            foreach ($c->getByTag('cli_command') as $command) {
+                $app->add($command);
+            }
+            return $app;
+        });
+
+        $this->add(CliMigratorInterface::class, fn(ContainerInterface $c) => new CliMigrator(
+            $c->get(MigrationStateStorageInterface::class),
+            $c->getByTag('migration'),
+        ));
+
+        $this->add(
+            ApplyAllCommand::class,
+            fn(Container $c) => new ApplyAllCommand($c->get(CliMigratorInterface::class)),
+            ['cli_command']
+        );
+
+        $this->add(
+            CreateCommand::class,
+            fn() => new CreateCommand,
+            ['cli_command'],
+        );
+
+        $this->add(
+            'template_dirs',
+            fn() => [],
+        );
+
+        $this->add(
+            'template_context',
+            fn(Container $c) => [
+                'asset' => fn(string $path) => $c->get(AssetLocatorInterface::class)->get($path),
+            ],
+        );
+
+        $this->add(
+            NoTeeInterface::class,
+            function(ContainerInterface $c) {
+                $noTee = NoTee::create(
+                    templateDirs: $c->get('template_dirs'),
+                    defaultContext: $c->get('template_context'),
+                );
+                return $noTee;
+            }
+        );
+
+        $this->add(
+            WebRequestErrorHandlerInterface::class,
+            fn(ContainerInterface $c) => new WebRequestErrorHandler(
+                $c->get(LoggerInterface::class),
+                $c->get('config')['debug']['displayErrorDetails'],
+            )
+        );
+
+        $this->add(LoggerInterface::class, fn() => new NullLogger);
+
+        $this->add(AssetLocatorInterface::class, fn() => new NoopAssetLocator);
     }
 }

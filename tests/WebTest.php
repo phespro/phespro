@@ -4,27 +4,17 @@
 namespace Phespro\Phespro\Tests;
 
 
+use Exception;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\Route\Router;
-use Phespro\Container\Container;
+use Phespro\Phespro\Extensibility\AbstractExtension;
 use Phespro\Phespro\Kernel;
-use Phespro\Phespro\PluginInterface;
 use PHPUnit\Framework\TestCase;
 
-class TestPlugin implements PluginInterface
+class TestPlugin extends AbstractExtension
 {
-    static function getPluginFactoryFunction(): callable
-    {
-        return fn() => new static;
-    }
-
-    function initializeContainer(Container $container): void
-    {
-
-    }
-
-    function initializeWeb(Router $router): void
+    function bootHttp(Router $router): void
     {
         $router->get('/', function() {
             $response = new Response;
@@ -37,14 +27,12 @@ class TestPlugin implements PluginInterface
 class WebTest extends TestCase
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      * @covers \Phespro\Phespro\Kernel
      */
     public function test()
     {
-        $kernel = new Kernel([]);
-
-        $kernel->addPlugin(TestPlugin::class);
+        $kernel = new Kernel([TestPlugin::class]);
 
         $response = $kernel->handleWebRequest(
             false,

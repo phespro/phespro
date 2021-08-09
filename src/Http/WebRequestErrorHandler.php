@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Phespro\Phespro;
+namespace Phespro\Phespro\Http;
 
 
 use Laminas\Diactoros\Response;
