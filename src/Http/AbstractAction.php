@@ -13,7 +13,7 @@ abstract class AbstractAction implements ActionInterface
     {
     }
 
-    function render(string $noTeeFile, array $context): ResponseInterface
+    function render(string $noTeeFile, array $context = []): ResponseInterface
     {
         return new Response(
             (string)$this->noTee->render($noTeeFile, $context)
