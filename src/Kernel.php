@@ -119,12 +119,13 @@ class Kernel extends Container
             ]
         ]);
 
-        $this->add('router', function(ContainerInterface $c) {
+        $this->add('router', function(Container $c) {
             $strategy = (new ApplicationStrategy())->setContainer($c);
+            assert($strategy instanceof ApplicationStrategy);
             return (new Router)->setStrategy($strategy);
         });
 
-        $this->add('cli_application', function(ContainerInterface $c) {
+        $this->add('cli_application', function(Container $c) {
             $app = new Application('Phespro CLI');
             foreach ($c->getByTag('cli_command') as $command) {
                 $app->add($command);
@@ -132,7 +133,7 @@ class Kernel extends Container
             return $app;
         });
 
-        $this->add(CliMigratorInterface::class, fn(ContainerInterface $c) => new CliMigrator(
+        $this->add(CliMigratorInterface::class, fn(Container $c) => new CliMigrator(
             $c->get(MigrationStateStorageInterface::class),
             $c->getByTag('migration'),
         ));
