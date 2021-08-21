@@ -5,7 +5,6 @@ namespace Phespro\Phespro\Http;
 use Laminas\Diactoros\Response;
 use NoTee\NoTeeInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractAction implements ActionInterface
 {
