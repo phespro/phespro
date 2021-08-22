@@ -41,6 +41,8 @@ $kernel = new Kernel([
 ]);
 ```
 
+Please note, that your extensions are executed in the order, that they are contained in the passed extension array.
+
 Your extension class needs to implement the interface `Phespro\Phespro\Extensibility\ExtensionInterface`.
 
 ```
@@ -73,4 +75,37 @@ You may extend the class `Phespro\Phespro\Extensibility\AbstractExtension` for s
 
 ## Migrations
 
-TODO add docs
+Phespro comes with support for migrations out-of-the-box. Migrations can be used to migrate anything.
+And because Phespro does not care for what type of database you use, you can adapt the migrations to
+any database or storage.
+
+Before using the migration system, you need to provide a implementation for the interface `Phespro\Phespro\Migration\MigrationStateStorageInterface`.
+
+Phespro ships with an implementation for SQLite. You can use this implementation by registering the needed service:
+
+```
+// assumes, that the service 'db' is registered and provides a pdo connection to an sqlite db
+$kernel->add(MigrationStateStorageInterface::class, fn(Container $c) => new SQLiteMigrationStateStorage(
+    $c->get('db'))
+);
+```
+
+You can simply generate a migration by executing the following command:
+
+```
+bin/console migration:create --directory the/directory/path/of/your/migrations --namespace App
+```
+
+Now you can register the migration by adding it in the `boot`-method of your extension.
+
+```
+$kernel->add(Migration1000::class, fn() => new Migration1000, ['migration']);
+```
+
+## Routing / Middlewares
+
+Phespro uses the router implementation of the phpleague. You can find the documentation here:
+
+https://route.thephpleague.com/
+
+You can simply add routes and middlewares in the `bootHttp`-method of your extension.
