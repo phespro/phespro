@@ -6,7 +6,7 @@ Another PHP framework? Yes and here is why:
 - Minimalistic -> Most frameworks do too much
 - Stable -> Because of its minimalism, updating to new versions should be easy
 - Simple -> Easy to set up, easy to understand
-- Modern -> Built with modern PHP (>8.0)
+- Modern -> Built with modern PHP (>=8.0)
 - Extensible -> Very simple to extend
 
 ## Setup
