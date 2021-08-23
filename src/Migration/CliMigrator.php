@@ -3,24 +3,28 @@
 
 namespace Phespro\Phespro\Migration;
 
-
+use MemoryMigrationStateStorage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CliMigrator implements CliMigratorInterface
 {
-    protected MigrationStateStorageInterface $migrationStateStorage;
-    protected array $migrations;
-
-    public function __construct(MigrationStateStorageInterface $migrationStateStorage, array $migrations)
+    public function __construct(
+        protected MigrationStateStorageInterface $migrationStateStorage,
+        protected array $migrations,
+        protected LoggerInterface $logger,
+    )
     {
-        $this->migrationStateStorage = $migrationStateStorage;
-        $this->migrations = $migrations;
     }
 
     function applyAll(InputInterface $input, OutputInterface $output): void
     {
+        if ($this->migrationStateStorage instanceof MemoryMigrationStateStorage) {
+            $this->logger->warning(MemoryMigrationStateStorage::class . ' is only intended for testing');
+        }
+
         $migrations = array_filter(
             $this->migrations,
             fn(MigrationInterface $migration) => !$this->migrationStateStorage->contains($migration->getId())
