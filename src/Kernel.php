@@ -31,8 +31,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Laminas\Diactoros\ServerRequestFactory;
-use MemoryMigrationStateStorage;
-use Phespro\Phespro\Migration\MigrationStateStorage\MemoryMigrationStateStorage as MigrationStateStorageMemoryMigrationStateStorage;
+use Phespro\Phespro\Migration\MigrationStateStorage\MemoryMigrationStateStorage;
 
 class Kernel extends Container
 {
@@ -134,7 +133,7 @@ class Kernel extends Container
             return $app;
         });
 
-        $this->add(MigrationStateStorageInterface::class, fn() => new MigrationStateStorageInterface);
+        $this->add(MigrationStateStorageInterface::class, fn() => new MemoryMigrationStateStorage);
 
         $this->add(CliMigratorInterface::class, fn(Container $c) => new CliMigrator(
             $c->get(MigrationStateStorageInterface::class),
