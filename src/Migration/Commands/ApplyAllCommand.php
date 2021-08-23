@@ -21,7 +21,7 @@ class ApplyAllCommand extends Command
 
     protected function configure()
     {
-        $this->setName('migration:apply_all');
+        $this->setName('migration:apply-all');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

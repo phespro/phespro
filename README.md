@@ -102,6 +102,8 @@ Now you can register the migration by adding it in the `boot`-method of your ext
 $kernel->add(Migration1000::class, fn() => new Migration1000, ['migration']);
 ```
 
+Now you can execute the migrations by running `bin/console migration:apply-all` .
+
 ## Routing / Middlewares
 
 Phespro uses the router implementation of the phpleague. You can find the documentation here:
