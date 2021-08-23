@@ -1,7 +1,15 @@
 <?php
 
+namespace Phespro\Phespro\Migration\MigrationStateStorage;
+
 use Phespro\Phespro\Migration\MigrationStateStorageInterface;
 
+/**
+ * Primarily for testing purposes
+ * 
+ * 
+ * @package Phespro\Phespro\Migration\MigrationStateStorage
+ */
 class MemoryMigrationStateStorage implements MigrationStateStorageInterface
 {
     private array $migrations = [];
