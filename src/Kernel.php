@@ -138,6 +138,7 @@ class Kernel extends Container
         $this->add(CliMigratorInterface::class, fn(Container $c) => new CliMigrator(
             $c->get(MigrationStateStorageInterface::class),
             $c->getByTag('migration'),
+            $c->get(LoggerInterface::class),
         ));
 
         $this->add(
