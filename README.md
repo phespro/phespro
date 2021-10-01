@@ -1,6 +1,4 @@
-# phespro
-
-<img src="./logo.svg" alt="logo" />
+<img src="./logo.svg" alt="logo" width="250" />
 
 Another PHP framework? Yes and here is why:
 
