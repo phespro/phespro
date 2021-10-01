@@ -1,5 +1,7 @@
 # phespro
 
+<img src="./logo.svg" alt="logo" />
+
 Another PHP framework? Yes and here is why:
 
 - Caches are bad -> No built in caches
