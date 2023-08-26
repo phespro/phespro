@@ -19,11 +19,7 @@ class MigrationTest extends TestCase
      */
     function test()
     {
-        $kernel = new Kernel([]);
-
-        $migrationStateStorage = new MemoryMigrationStateStorage();
-
-        $kernel->add(MigrationStateStorageInterface::class, fn() => $migrationStateStorage);
+        $kernel = new Kernel;
 
         $kernel->add(
             'testmigration1',
@@ -74,6 +70,7 @@ class MigrationTest extends TestCase
 
         $commandTester->getDisplay();
 
+        $migrationStateStorage = $kernel->get(MigrationStateStorageInterface::class);
         $this->assertTrue($migrationStateStorage->contains('1'));
         $this->assertTrue($migrationStateStorage->contains('2'));
         $this->assertFalse($migrationStateStorage->contains('3'));

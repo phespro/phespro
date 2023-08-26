@@ -35,7 +35,7 @@ use Phespro\Phespro\Migration\MigrationStateStorage\MemoryMigrationStateStorage;
 
 class Kernel extends Container
 {
-    function __construct(array $extensions)
+    function __construct(array $extensions = [])
     {
         $this->registerFrameworkServices();
         $this->preBoot($extensions);
