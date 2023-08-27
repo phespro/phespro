@@ -131,7 +131,7 @@ https://packagist.org/?query=validation
 ## Logging
 
 When using Phespro you need to explicitly activate Logging. We want to give you the freedom of choice regarding Logging.
-By default the `NullLogger` is used, which is like sending the logs to `/dev/null`. This means, that nothing gets logged
+By default, the `NullLogger` is used, which is like sending the logs to `/dev/null`. This means, that nothing gets logged
 unless you explicitly activate logging.
 
 You can activate logging by replacing the service `\Psr\LoggerInterface` with the `decorate` function. Your logger must
