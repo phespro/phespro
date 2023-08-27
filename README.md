@@ -24,12 +24,10 @@ Alternatively, you can include phespro into your project and do the setup manual
 composer require phespro/phespro
 ```
 
-## The Kernel / The Container
+## Kernel, Container and Extension
 
-Phespro is built around a dependency injection container. Everything that happens in Phespro is done through the
-container. Therefore, the kernel is the dependency injection container.
-
-## Using Extensions
+Phespro is built around a dependency injection container. Nearly everything that happens in Phespro is done through the
+container. Because of that, the class `\Phespro\Phespro\Kernel` is a subclass of `\Phespro\Container\Container`.
 
 Phespro is built around extensions. When you write your application, you need to build at minimum one extension.
 
@@ -72,6 +70,11 @@ class MyExtension implements Phespro\Phespro\Extensibility\ExtensionInterface
 ```
 
 You may extend the class `Phespro\Phespro\Extensibility\AbstractExtension` for simplicity reasons. But you don't have to.
+
+When using the <a href="https://packagist.org/packages/phespro/project">project template</a> you already have the first
+extension registered. When including phespro without the project template, you might consider taking a look into the
+<a href="https://github.com/phespro/project">project template code</a> for understanding, how to set up Phespro correctly.
+
 
 ## Migrations
 
