@@ -125,6 +125,8 @@ would like to use.
 Phespro comes with the preinstalled library <a href="https://packagist.org/packages/mschop/notee">NoTee</a> for
 generating HTML. You can either use this library (recommend) or install any templating engine that you would like to use.
 
+<a href="https://notee.readthedocs.io/en/latest/">Link to NoTee Documentation</a>
+
 ## Validation
 
 Phespro does not ship any validation engine. Pick the validation engine, that fits you needs best:
