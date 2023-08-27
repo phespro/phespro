@@ -151,3 +151,14 @@ $container->decorate(\Psr\LoggerInterface::class, function() {
     return $logger;
 });
 ```
+
+## Add your first action / route
+
+Adding a new route to your application consists of the following steps:
+
+1. Create an action class. This action class must implement the interface `\Phespro\Phespro\Http\ActionInterface`.
+2. Register the action class in the dependency injection container in the `boot` method of your extension.
+3. Register the route with a reference to service registered in step 2 (by service name). E.g. register an action for "GET /products" would be: `$router->get('/products', 'myServiceName')`
+
+You might consider using `Phespro\Phespro\Http\AbstractAction` as the base class for your action class. The base class
+provides default functionality for you.
