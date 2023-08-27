@@ -6,7 +6,7 @@ Another PHP framework? Yes and here is why:
 - Minimalistic -> Most frameworks do too much
 - Stable -> Because of its minimalism, updating to new versions should be easy
 - Simple -> Easy to set up, easy to understand
-- Modern -> Built with modern PHP (>=8.0)
+- Modern -> Built with modern PHP (>=8.2)
 - Extensible -> Very simple to extend
 
 ## Setup
@@ -15,19 +15,19 @@ You will need composer for setting up Phespro (Composer installation under: http
 If you have composer installed, you can run the following command:
 
 ```
-composer create-project phespro/project:dev-master your_project_name
+composer create-project phespro/project your_project_name
 ```
 
 Alternatively, you can include phespro into your project and do the setup manually:
 
 ```
-composer require phespro/phespro:dev-master
+composer require phespro/phespro
 ```
 
 ## The Kernel / The Container
 
 Phespro is built around a dependency injection container. Everything, that happens in Phespro is done through the
-container. Therefore the kernel is the dependency injection container.
+container. Therefore, the kernel is the dependency injection container.
 
 ## Using Extensions
 
@@ -41,7 +41,7 @@ $kernel = new Kernel([
 ]);
 ```
 
-Please note, that your extensions are executed in the order, that they are contained in the passed extension array.
+Please note, that your extensions are executed in the order, that they are contained in the extension array passed on kernel creation.
 
 Your extension class needs to implement the interface `Phespro\Phespro\Extensibility\ExtensionInterface`.
 
@@ -51,19 +51,19 @@ use League\Route\Router;
 
 class MyExtension implements Phespro\Phespro\Extensibility\ExtensionInterface
 {
-    static function preBoot(Kernel $kernel)
+    static function preBoot(Kernel $kernel): void
     {
         // primarily used for registering your extension service in the dependency injection container
         $kernel->add(static::class, fn() => new static, ['extension']);
     }
 
-    function boot(Kernel $kernel)
+    function boot(Kernel $kernel): void
     {
         // here you can register all your services. This includes actions (for web request handling).
         $kernel->add(IndexGet::class, fn() => new IndexGet);
     }
 
-    function bootHttp(Router $router)
+    function bootHttp(Router $router): void
     {
         // register your routes and middlewares
         $router->get('/', IndexGet::class));
@@ -111,3 +111,19 @@ Phespro uses the router implementation of the phpleague. You can find the docume
 https://route.thephpleague.com/
 
 You can simply add routes and middlewares in the `bootHttp`-method of your extension.
+
+## ORM
+
+We don't think, that every application should be shipped with an ORM. If you want to use an ORM, just pick the ORM you
+would like to use.
+
+## Template Engine
+
+Phespro comes with the preinstalled library <a href="https://packagist.org/packages/mschop/notee">NoTee</a> for
+generating HTML. You can either use this library (recommend) or install any templating engine that you would like to use.
+
+## Validation
+
+Phespro does not ship any validation engine. Pick the validation engine, that fits you needs best:
+
+https://packagist.org/?query=validation
