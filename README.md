@@ -1,9 +1,9 @@
 <img src="./logo.svg" alt="logo" width="250" />
-
+ 
 Another PHP framework? Yes and here is why:
 
-- Caches are bad -> No built in caches
-- Minimalistic -> Most frameworks do too much
+- Caching causes complexity -> No built-in caches.
+- Minimalistic -> Most frameworks do too much. You have the freedom to choose you own tooling.
 - Stable -> Because of its minimalism, updating to new versions should be easy
 - Simple -> Easy to set up, easy to understand
 - Modern -> Built with modern PHP (>=8.2)
@@ -26,7 +26,7 @@ composer require phespro/phespro
 
 ## The Kernel / The Container
 
-Phespro is built around a dependency injection container. Everything, that happens in Phespro is done through the
+Phespro is built around a dependency injection container. Everything that happens in Phespro is done through the
 container. Therefore, the kernel is the dependency injection container.
 
 ## Using Extensions
@@ -127,3 +127,22 @@ generating HTML. You can either use this library (recommend) or install any temp
 Phespro does not ship any validation engine. Pick the validation engine, that fits you needs best:
 
 https://packagist.org/?query=validation
+
+## Logging
+
+When using Phespro you need to explicitly activate Logging. We want to give you the freedom of choice regarding Logging.
+By default the `NullLogger` is used, which is like sending the logs to `/dev/null`. This means, that nothing gets logged
+unless you explicitly activate logging.
+
+You can activate logging by replacing the service `\Psr\LoggerInterface` with the `decorate` function. Your logger must
+implement the interface `Psr\LoggerInterface`.
+
+The following example uses Monolog:
+
+```php
+$container->decorate(\Psr\LoggerInterface::class, function() {
+    $logger = new Logger('MyLogger');
+    $logger->pushHandler(new StreamHandler('/path/to/your/logfile.log'));
+    return $logger;
+});
+```
