@@ -12,7 +12,8 @@ Another PHP framework? Yes and here is why:
 ## Setup
 
 You will need composer for setting up Phespro (Composer installation under: https://getcomposer.org).
-If you have composer installed, you can run the following command:
+If you have composer installed, you can run the following command which will set up a new project using our project
+template:
 
 ```
 composer create-project phespro/project your_project_name
@@ -151,6 +152,91 @@ $container->decorate(\Psr\LoggerInterface::class, function() {
     return $logger;
 });
 ```
+
+## Configuration
+
+Configuration is built way to complex in most frameworks. Most frameworks use either some format like JSON, YAML or XML.
+Other use PHP arrays. Since both approaches are possible with Phespro, the idiomatic approach is in Phespro is using
+configuration classes. Configuration classes are normal PHP classes, which represent the configuration data structure.
+
+The following example provides configuration for a mysql database connection. First let's create the class:
+
+```php
+readonly class DatabaseConfiguration
+{
+    public function __construct(
+        public string $host,
+        public string $username,
+        public string $password,
+        public string $databaseName,
+        public int $port = 3306, 
+    )
+    {
+    }
+}
+```
+
+In your Extension you can now register a new service for the database configuration:
+
+```php
+class MyExtension implements Phespro\Phespro\Extensibility\ExtensionInterface
+{
+    // ...
+
+    function boot(Kernel $kernel): void
+    {
+        $kernel->add(DatabaseConfiguration::class, function()  {
+            $fail = fn(string $name) => throw new \Exception("Missing environment variable $name");
+        
+            return new DatabaseConfiguration(
+                host: getenv('DATABASE_HOST') ?: $fail('DATABASE_HOST'),
+                username: getenv('DATABASE_USER') ?: $fail('DATABASE_USER'),
+                password: getenv('DATABASE_PASS') ?: $fail('DATABASE_PASS'),
+                databaseName: getenv('DATABASE_NAME') ?: $fail('DATABASE_NAME'),
+                port: getenv('DATABASE_PORT') ?: 3306,
+            );     
+        });
+    }
+    
+    // ...
+}
+```
+
+Great. We now have a configuration class which gives us more type safety compared to configurations in other frameworks.
+Now we can simply use that configuration in any service we need the data:
+
+```php
+readonly class DatabaseService
+{
+    public function __construct(
+        protected DatabaseConfiguration $databaseConfiguration 
+    )
+    {
+    }
+}
+
+class MyOtherExtension implements Phespro\Phespro\Extensibility\ExtensionInterface
+{
+    // ...
+
+    function boot(Kernel $kernel): void
+    {
+        $kernel->add(DatabaseService::class, fn(ContainerInterface $c) => new DatabaseService(
+            databaseConfiguration: $c->get(DatabaseConfiguration::class),
+        ));
+    }
+    
+    // ...
+}
+```
+
+## Event System
+
+In many situation using decorator pattern is just fine. In some cases you might want to use an event system. In this
+case, you can use any event library you like. A good choice could be the
+<a href="https://packagist.org/packages/symfony/event-dispatcher">Symfony Event Dispatcher</a>.
+
+# HOWTO
 
 ## Add your first action / route
 
