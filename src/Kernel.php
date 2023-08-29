@@ -14,6 +14,7 @@ use Phespro\Container\Container;
 use Phespro\Container\ServiceAlreadyDefinedException;
 use Phespro\Phespro\Assets\AssetLocatorInterface;
 use Phespro\Phespro\Assets\NoopAssetLocator;
+use Phespro\Phespro\Configuration\FrameworkConfiguration;
 use Phespro\Phespro\Extensibility\ExtensionInterface;
 use Phespro\Phespro\Http\WebRequestErrorHandler;
 use Phespro\Phespro\Http\WebRequestErrorHandlerInterface;
@@ -108,11 +109,10 @@ class Kernel extends Container
 
     protected function registerFrameworkServices(): void
     {
-        $this->add('config', fn() => [
-            'debug' => [
-                'displayErrorDetails' => false,
-            ]
-        ]);
+        $this->add('config', fn() => new FrameworkConfiguration(
+            displayErrorDetails: getenv('PHESPRO_DISPLAY_ERROR_DETAILS') ?: false,
+            debugNoTee: getenv('PHESPRO_DEBUG_NOTEE') ?: false,
+        ));
 
         $this->add('router', function(Container $c) {
             $strategy = (new ApplicationStrategy())->setContainer($c);
@@ -175,7 +175,7 @@ class Kernel extends Container
             WebRequestErrorHandlerInterface::class,
             fn(ContainerInterface $c) => new WebRequestErrorHandler(
                 $c->get(LoggerInterface::class),
-                $c->get('config')['debug']['displayErrorDetails'],
+                $c->get('config'),
             )
         );
 

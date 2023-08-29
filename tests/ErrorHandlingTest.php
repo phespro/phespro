@@ -6,6 +6,7 @@ namespace Phespro\Phespro\Tests;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use League\Route\Router;
+use Phespro\Phespro\Configuration\FrameworkConfiguration;
 use Phespro\Phespro\Extensibility\AbstractExtension;
 use Phespro\Phespro\Kernel;
 use PHPUnit\Framework\TestCase;
@@ -36,11 +37,9 @@ class ErrorHandlingTest extends TestCase
         $kernel = new Kernel([
             ErrorHandlerTestPlugin::class,
         ]);
-        $kernel->decorate('config', fn($container, $prev) => array_replace_recursive($prev(), [
-            'debug' => [
-                'displayErrorDetails' => true,
-            ],
-        ]));
+        $kernel->decorate('config', fn($container, $prev) => new FrameworkConfiguration(
+            displayErrorDetails: true,
+        ));
         $response = $kernel->handleWebRequest(false, (new ServerRequestFactory)->createServerRequest('GET', '/'));
         $this->assertEquals(500, $response->getStatusCode());
     }

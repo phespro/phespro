@@ -5,7 +5,10 @@ namespace Phespro\Phespro\Http;
 
 
 use Laminas\Diactoros\Response;
+use NoTee\NodeFactory;
+use NoTee\NodeInterface;
 use NoTee\NoTee;
+use Phespro\Phespro\Configuration\FrameworkConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
@@ -13,8 +16,11 @@ class WebRequestErrorHandler implements WebRequestErrorHandlerInterface
 {
     public function __construct(
         protected LoggerInterface $logger,
-        protected bool $displayErrorDetails,
-    ) { }
+        protected FrameworkConfiguration $config,
+    )
+    {
+
+    }
 
     function handle(\Throwable $err): ResponseInterface
     {
@@ -32,7 +38,8 @@ class WebRequestErrorHandler implements WebRequestErrorHandlerInterface
             );
         }
 
-        $nf = NoTee::create()->getNodeFactory();
+        $noTee = NoTee::create(debug: $this->config->debugNoTee);
+        $nf = $noTee->getNodeFactory();
         $html = $nf->document(
             $nf->html(
                 $nf->head(
@@ -51,32 +58,9 @@ class WebRequestErrorHandler implements WebRequestErrorHandlerInterface
                     $nf->div(['class' => 'header'], 'Unkown Error Occured'),
                     $nf->div(
                         ['class' => 'content'],
-                        match($this->displayErrorDetails) {
+                        match($this->config->displayErrorDetails) {
                             false => $nf->div('Please contact the administrator'),
-                            true => $nf->wrapper(
-                                $nf->table(
-                                    $nf->tr(
-                                        $nf->td('Message'),
-                                        $nf->td($err->getMessage()),
-                                    ),
-                                    $nf->tr(
-                                        $nf->td('File'),
-                                        $nf->td($err->getFile()),
-                                    ),
-                                    $nf->tr(
-                                        $nf->td('Line'),
-                                        $nf->td($err->getLine()),
-                                    ),
-                                    $nf->tr(
-                                        $nf->td('Trace'),
-                                        $nf->td(
-                                            $nf->pre(
-                                                $err->getTraceAsString()
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
+                            true => $this->getErrorDetails($err, $nf),
                         },
                     ),
                 ),
@@ -87,5 +71,33 @@ class WebRequestErrorHandler implements WebRequestErrorHandlerInterface
         $response->getBody()->write((string)$html);
 
         return $response;
+    }
+
+    private function getErrorDetails(\Throwable $err, NodeFactory $nf): NodeInterface
+    {
+        return $nf->wrapper(
+            $nf->table(
+                $nf->tr(
+                    $nf->td('Message'),
+                    $nf->td($err->getMessage()),
+                ),
+                $nf->tr(
+                    $nf->td('File'),
+                    $nf->td($err->getFile()),
+                ),
+                $nf->tr(
+                    $nf->td('Line'),
+                    $nf->td($err->getLine()),
+                ),
+                $nf->tr(
+                    $nf->td('Trace'),
+                    $nf->td(
+                        $nf->pre(
+                            $err->getTraceAsString()
+                        ),
+                    ),
+                ),
+            ),
+        );
     }
 }
