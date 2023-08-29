@@ -230,6 +230,11 @@ class MyOtherExtension implements Phespro\Phespro\Extensibility\ExtensionInterfa
 }
 ```
 
+### Framework configuration
+
+If you want to work with the framework configuration, take a look at the class
+`\Phespro\Phespro\Configuration\FrameworkConfiguration`.
+
 ## Event System
 
 In many situation using decorator pattern is just fine. In some cases you might want to use an event system. In this
