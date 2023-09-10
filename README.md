@@ -70,7 +70,9 @@ class MyExtension implements Phespro\Phespro\Extensibility\ExtensionInterface
 }
 ```
 
-You may extend the class `Phespro\Phespro\Extensibility\AbstractExtension` for simplicity reasons. But you don't have to.
+You may use the trait `\Phespro\Phespro\NoTee\NoTeeTrait` for simplicity reasons. Using this trait, NoTee will get
+injected into your service automatically. By using this trait you can call `$this->renderString()` and
+`$this->renderResponse()` in your action classes.
 
 When using the <a href="https://packagist.org/packages/phespro/project">project template</a> you already have the first
 extension registered. When including phespro without the project template, you might consider taking a look into the
@@ -251,5 +253,5 @@ Adding a new route to your application consists of the following steps:
 2. Register the action class in the dependency injection container in the `boot` method of your extension.
 3. Register the route with a reference to service registered in step 2 (by service name). E.g. register an action for "GET /products" would be: `$router->get('/products', 'myServiceName')`
 
-You might consider using `Phespro\Phespro\Http\AbstractAction` as the base class for your action class. The base class
-provides default functionality for you.
+If you are using NoTee, you can use the trait `\Phespro\Phespro\NoTee\NoTeeTrait` for automatic injection of the 
+NoTee service into your action class.
