@@ -182,5 +182,12 @@ class Kernel extends Container
         $this->add(LoggerInterface::class, fn() => new NullLogger);
 
         $this->add(AssetLocatorInterface::class, fn() => new NoopAssetLocator);
+
+        $this->decorateAll(function(Container $c, mixed $inner) {
+            if (is_object($inner) && method_exists($inner, 'injectNoTee')) {
+                $inner->injectNoTee($c->get(NoTeeInterface::class));
+            }
+            return $inner;
+        });
     }
 }

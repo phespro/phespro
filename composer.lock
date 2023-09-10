@@ -416,16 +416,16 @@
         },
         {
             "name": "phespro/container",
-            "version": "1.0.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phespro/container.git",
-                "reference": "e39bfbd63963fa89c74f3a3602f2aa1462f50de3"
+                "reference": "ef0a2df45e1fe2875009958aa54ee2f9c66e97e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phespro/container/zipball/e39bfbd63963fa89c74f3a3602f2aa1462f50de3",
-                "reference": "e39bfbd63963fa89c74f3a3602f2aa1462f50de3",
+                "url": "https://api.github.com/repos/phespro/container/zipball/ef0a2df45e1fe2875009958aa54ee2f9c66e97e9",
+                "reference": "ef0a2df45e1fe2875009958aa54ee2f9c66e97e9",
                 "shasum": ""
             },
             "require": {
@@ -455,9 +455,9 @@
             "description": "Super simple dependency injection container for php",
             "support": {
                 "issues": "https://github.com/phespro/container/issues",
-                "source": "https://github.com/phespro/container/tree/1.0.0"
+                "source": "https://github.com/phespro/container/tree/1.2.1"
             },
-            "time": "2023-08-26T13:41:13+00:00"
+            "time": "2023-09-10T13:15:38+00:00"
         },
         {
             "name": "psr/container",
@@ -4365,5 +4365,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
