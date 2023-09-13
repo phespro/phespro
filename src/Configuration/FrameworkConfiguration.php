@@ -2,11 +2,12 @@
 
 namespace Phespro\Phespro\Configuration;
 
-readonly class FrameworkConfiguration
+class FrameworkConfiguration
 {
     public function __construct(
-        public bool $displayErrorDetails = false,
-        public bool $debugNoTee = false,
+        public bool $displayErrorDetails,
+        public bool $debugNoTee,
+        public bool $autoCsrfProtect,
     )
     {
     }

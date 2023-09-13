@@ -29,7 +29,7 @@ class WebRequestErrorHandler implements WebRequestErrorHandlerInterface
                 'message' => $err->getMessage(),
                 'file' => $err->getFile(),
                 'line' => $err->getLine(),
-                'trace' => $err->getTrace(),
+                'trace' => $err->getTraceAsString(),
             ]);
         } catch (\Throwable) {
             trigger_error(
