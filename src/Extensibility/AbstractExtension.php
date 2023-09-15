@@ -28,7 +28,7 @@ abstract class AbstractExtension implements ExtensionInterface
     /**
      * @inheritDoc
      */
-    function bootHttp(Router $router): void
+    function bootHttp(Kernel $kernel, Router $router): void
     {
     }
 }

@@ -35,7 +35,7 @@ class ContainerActionTestExtension extends AbstractExtension
         $kernel->add(ContainerActionTestAction::class, fn() => new ContainerActionTestAction());
     }
 
-    function bootHttp(Router $router): void
+    function bootHttp(Kernel $kernel, Router $router): void
     {
         $router->get('/', ContainerActionTestAction::class);
     }

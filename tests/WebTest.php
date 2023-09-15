@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class TestPlugin extends AbstractExtension
 {
-    function bootHttp(Router $router): void
+    function bootHttp(Kernel $kernel, Router $router): void
     {
         $router->get('/', function() {
             $response = new Response;

@@ -61,7 +61,7 @@ class Kernel extends Container
             assert($router instanceof Router);
             foreach ($this->getByTag('extension') as $extension) {
                 assert($extension instanceof ExtensionInterface);
-                $extension->bootHttp($router);
+                $extension->bootHttp($this, $router);
             }
 
             $config = $this->get('config');

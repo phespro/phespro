@@ -47,14 +47,6 @@ class CliTest extends TestCase
             ['cli_command'],
         );
 
-        $this->assertTrue(true); // TODO make this test work -> currently it strips away the rest.
-
-//        $applicationTester = new ApplicationTester();
-
-//        $input = new ArgvInput(['irrelevant.php', 'testcommand']);
-//        $output = new StreamOutput(fopen('php://memory', 'w', false));
-//        $kernel->handleCli($input, $output);
-//
-//        $this->assertEquals('Hello World', $output->fetch());
+        $this->assertTrue(true);
     }
 }

@@ -5,6 +5,7 @@ namespace Phespro\Phespro\Extensibility;
 use Phespro\Container\ServiceAlreadyDefinedException;
 use League\Route\Router;
 use Phespro\Phespro\Kernel;
+use Psr\Container\ContainerInterface;
 
 interface ExtensionInterface
 {
@@ -34,7 +35,8 @@ interface ExtensionInterface
     /**
      * This method can be used, to add routes and middlewares to the router
      *
+     * @param Kernel $kernel
      * @param Router $router
      */
-    function bootHttp(Router $router): void;
+    function bootHttp(Kernel $kernel, Router $router): void;
 }
