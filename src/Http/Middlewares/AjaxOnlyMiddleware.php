@@ -15,8 +15,9 @@ class AjaxOnlyMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $isAjax = $request->getHeader(self::HEADER_NAME) === self::EXPECTED_HEADER_VALUE;
-        if (!$isAjax) {
+        $header = $request->getHeader(self::HEADER_NAME);
+        $isAjax = !empty($header) && $header[array_key_first($header)] === self::EXPECTED_HEADER_VALUE;
+        if ($isAjax) {
             return $handler->handle($request);
         } else {
             $response = new Response(status: 400);

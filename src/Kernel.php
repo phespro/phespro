@@ -16,6 +16,7 @@ use Phespro\Phespro\Assets\AssetLocatorInterface;
 use Phespro\Phespro\Assets\NoopAssetLocator;
 use Phespro\Phespro\Configuration\FrameworkConfiguration;
 use Phespro\Phespro\Extensibility\ExtensionInterface;
+use Phespro\Phespro\Http\Middlewares\AjaxOnlyMiddleware;
 use Phespro\Phespro\Http\Middlewares\CsrfMiddleware;
 use Phespro\Phespro\Http\WebRequestErrorHandler;
 use Phespro\Phespro\Http\WebRequestErrorHandlerInterface;
@@ -243,5 +244,7 @@ class Kernel extends Container
             }
             return $inner;
         });
+
+        $this->add(AjaxOnlyMiddleware::class, fn() => new AjaxOnlyMiddleware);
     }
 }
