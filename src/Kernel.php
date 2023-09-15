@@ -208,13 +208,15 @@ class Kernel extends Container
         $this->add(
             NoTeeInterface::class,
             function(ContainerInterface $c) {
+                $config = $c->get('config');
+                assert($config instanceof FrameworkConfiguration);
+
                 $noTee = NoTee::create(
                     templateDirs: $c->get('template_dirs'),
                     defaultContext: $c->get('template_context'),
+                    debug: $config->debugNoTee,
                 );
 
-                $config = $c->get('config');
-                assert($config instanceof FrameworkConfiguration);
                 if ($config->autoCsrfProtect) {
                     $noTee->getNodeFactory()->subscribe($c->get(NoTeeSubscriber::class));
                 }
