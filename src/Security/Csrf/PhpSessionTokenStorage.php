@@ -2,6 +2,8 @@
 
 namespace Phespro\Phespro\Security\Csrf;
 
+use Exception;
+
 class PhpSessionTokenStorage implements TokenStorageInterface
 {
     protected const STORAGE_KEY = 'csrf_token';
@@ -24,10 +26,21 @@ class PhpSessionTokenStorage implements TokenStorageInterface
         return $_SESSION[static::STORAGE_KEY] ?? throw new TokenMissingException;
     }
 
+    /**
+     * @throws Exception
+     */
     protected function ensureSession(): void
     {
-        if (session_status() !== PHP_SESSION_NONE) {
-            session_start();
+        $sessionStatus = session_status();
+
+        if ($sessionStatus === PHP_SESSION_DISABLED) {
+            throw new Exception("Cannot start session, since sessions are disabled");
         }
+
+        if ($sessionStatus === PHP_SESSION_ACTIVE) {
+            return;
+        }
+
+        session_start();
     }
 }
