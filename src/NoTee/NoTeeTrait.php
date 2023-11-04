@@ -26,6 +26,6 @@ trait NoTeeTrait
 
     public function renderString(string $templateFile, array $context = []): string
     {
-        return $this->noTee->render($templateFile, $context);
+        return (string)$this->noTee->render($templateFile, $context);
     }
 }
