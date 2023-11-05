@@ -25,6 +25,8 @@ class CliMigrator implements CliMigratorInterface
             $this->logger->warning(MemoryMigrationStateStorage::class . ' is only intended for testing');
         }
 
+        $this->migrationStateStorage->prepareDataStructures();
+
         $migrations = array_filter(
             $this->migrations,
             fn(MigrationInterface $migration) => !$this->migrationStateStorage->contains($migration->getId())

@@ -6,29 +6,39 @@ namespace Phespro\Phespro\Migration\MigrationStateStorage;
 
 use Phespro\Phespro\Migration\MigrationStateStorageInterface;
 
-class SQLiteMigrationStateStorage implements MigrationStateStorageInterface
+readonly class SQLiteMigrationStateStorage implements MigrationStateStorageInterface
 {
-    public function __construct(protected \PDO $conn)
+    public function __construct(
+        protected \PDO $pdo
+    )
     {
-        $conn->exec("
-            CREATE TABLE IF NOT EXISTS migrations (
-                id TEXT PRIMARY KEY                
-            );
-        ");
     }
 
     function add(string $id): void
     {
-        $stmt = $this->conn->prepare("
+        $this->pdo->prepare("
             INSERT INTO migrations VALUES (:id)
-        ");
-        $stmt->execute(['id' => $id]);
+        ")->execute(['id' => $id]);
     }
 
     function contains(string $id): bool
     {
-        $stmt = $this->conn->prepare('SELECT COUNT(*) FROM migrations WHERE id = :id');
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM migrations WHERE id = :id');
         $stmt->execute(['id' => $id]);
         return !!$stmt->fetchColumn();
+    }
+
+    public function getPassed(): iterable
+    {
+        return $this->pdo->query("SELECT id FROM migrations")->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    public function prepareDataStructures(): void
+    {
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS migrations (
+                id TEXT PRIMARY KEY                
+            );
+        ");
     }
 }

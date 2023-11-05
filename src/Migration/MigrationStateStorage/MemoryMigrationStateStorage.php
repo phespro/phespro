@@ -23,4 +23,14 @@ class MemoryMigrationStateStorage implements MigrationStateStorageInterface
     {
         return in_array($id, $this->migrations);
     }
+
+    public function getPassed(): iterable
+    {
+        return $this->migrations;
+    }
+
+    public function prepareDataStructures(): void
+    {
+        // noop
+    }
 }
