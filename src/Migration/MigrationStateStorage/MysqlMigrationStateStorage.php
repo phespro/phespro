@@ -36,7 +36,7 @@ readonly class MysqlMigrationStateStorage implements MigrationStateStorageInterf
     {
         $this->pdo->exec("
             CREATE TABLE IF NOT EXISTS migration (
-                id VARCHAR(255) PRIMARY KEY,
+                id VARCHAR(255) PRIMARY KEY
             );     
         ");
     }
