@@ -12,3 +12,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php \
     && php -r "unlink('composer-setup.php');" \
     && mv composer.phar /usr/bin/composer
+
+EXPOSE 8080
+ENTRYPOINT ["/usr/local/bin/php"]
+CMD ["cli.php", "server:run", "--host", "0.0.0.0:8080"]

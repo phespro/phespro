@@ -11,7 +11,9 @@
         "laminas/laminas-diactoros": "^3.1",
         "laminas/laminas-httphandlerrunner": "^2.7",
         "mschop/notee": "^1.0.1",
-        "psr/log": "^3.0"
+        "psr/log": "^3.0",
+        "revolt/event-loop-adapter-react": "^1.1",
+        "react/http": "^1.9"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.3",

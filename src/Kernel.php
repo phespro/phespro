@@ -15,6 +15,7 @@ use Phespro\Container\ServiceAlreadyDefinedException;
 use Phespro\Phespro\Configuration\FrameworkConfiguration;
 use Phespro\Phespro\Extensibility\ExtensionInterface;
 use Phespro\Phespro\Http\Middlewares\CsrfMiddleware;
+use Phespro\Phespro\Http\Server\StartServerCommand;
 use Phespro\Phespro\Http\WebRequestErrorHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -134,6 +135,12 @@ class Kernel extends Container
             }
             return $app;
         });
+
+        $this->add(
+            StartServerCommand::class,
+            fn() => new StartServerCommand($this),
+            ['cli_command'],
+        );
 
         $this->add(LoggerInterface::class, fn() => new NullLogger);
 
