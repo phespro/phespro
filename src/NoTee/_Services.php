@@ -29,7 +29,7 @@ final class _Services
                 );
 
                 if ($config->autoCsrfProtect) {
-                    $noTee->getNodeFactory()->subscribe($c->get(NoTeeSubscriber::class));
+                    $noTee->getNodeFactory()->subscribe($c->getObject(NoTeeSubscriber::class));
                 }
 
                 return $noTee;
@@ -44,17 +44,17 @@ final class _Services
         $kernel->add(
             'template_context',
             fn(Container $c) => [
-                'asset' => fn(string $path) => $c->get(AssetLocatorInterface::class)->get($path),
+                'asset' => fn(string $path) => $c->getObject(AssetLocatorInterface::class)->get($path),
             ],
         );
 
-        $kernel->add(NoTeeSubscriber::class, fn(ContainerInterface $c) => new NoTeeSubscriber(
-            $c->get(TokenProviderInterface::class),
+        $kernel->add(NoTeeSubscriber::class, fn() => new NoTeeSubscriber(
+            $kernel->getObject(TokenProviderInterface::class),
         ));
 
         $kernel->decorateAll(function(Container $c, mixed $inner) {
             if (is_object($inner) && method_exists($inner, 'injectNoTee')) {
-                $inner->injectNoTee($c->get(NoTeeInterface::class));
+                $inner->injectNoTee($c->getObject(NoTeeInterface::class));
             }
             return $inner;
         });

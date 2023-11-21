@@ -45,7 +45,7 @@ class CsrfProtectionTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ],
             body: [
-                'csrf_token' => $kernel->get(TokenStorageInterface::class)->get(),
+                'csrf_token' => $kernel->getObject(TokenStorageInterface::class)->get(),
             ],
         );
 

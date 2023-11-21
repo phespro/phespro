@@ -13,8 +13,8 @@ final class _Services
         $kernel->add(TokenStorageInterface::class, fn() => new PhpSessionTokenStorage);
         $kernel->add(TokenGeneratorInterface::class, fn() => new TokenGenerator);
         $kernel->add(TokenProviderInterface::class, fn() => new TokenProvider(
-            $kernel->get(TokenGeneratorInterface::class),
-            $kernel->get(TokenStorageInterface::class),
+            $kernel->getObject(TokenGeneratorInterface::class),
+            $kernel->getObject(TokenStorageInterface::class),
         ));
     }
 }

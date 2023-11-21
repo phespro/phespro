@@ -53,7 +53,7 @@ class Kernel extends Container
             assert($config instanceof FrameworkConfiguration);
 
             if ($config->autoCsrfProtect) {
-                $router->middleware($this->get(CsrfMiddleware::class));
+                $router->middleware($this->getObject(CsrfMiddleware::class));
             }
 
             if ($request === null) {
@@ -66,7 +66,7 @@ class Kernel extends Container
                 (new SapiEmitter)->emit($response);
             }
         } catch (\Throwable $err) {
-            $handler = $this->get(WebRequestErrorHandlerInterface::class);
+            $handler = $this->getObject(WebRequestErrorHandlerInterface::class);
             assert($handler instanceof WebRequestErrorHandlerInterface);
             $response = $handler->handle($err);
             if ($err instanceof LeagueHttpException) {

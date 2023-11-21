@@ -13,9 +13,9 @@ final class _Services
         $kernel->add(MigrationStateStorageInterface::class, fn() => new MemoryMigrationStateStorage());
 
         $kernel->add(CliMigratorInterface::class, fn() => new CliMigrator(
-            $kernel->get(MigrationStateStorageInterface::class),
+            $kernel->getObject(MigrationStateStorageInterface::class),
             $kernel->getByTag('migration'),
-            $kernel->get(LoggerInterface::class),
+            $kernel->getObject(LoggerInterface::class),
         ));
 
         Commands\_Services::register($kernel);
