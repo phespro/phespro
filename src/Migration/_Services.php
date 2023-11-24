@@ -19,6 +19,5 @@ final class _Services
         ));
 
         Commands\_Services::register($kernel);
-        MigrationStateStorage\_Services::register($kernel);
     }
 }
