@@ -64,13 +64,13 @@ class MigrationTest extends TestCase
             ['migration']
         );
 
-        $commandTester = new CommandTester($kernel->get(ApplyAllCommand::class));
+        $commandTester = new CommandTester($kernel->getObject(ApplyAllCommand::class));
 
         $commandTester->execute([]);
 
         $commandTester->getDisplay();
 
-        $migrationStateStorage = $kernel->get(MigrationStateStorageInterface::class);
+        $migrationStateStorage = $kernel->getObject(MigrationStateStorageInterface::class);
         $this->assertTrue($migrationStateStorage->contains('1'));
         $this->assertTrue($migrationStateStorage->contains('2'));
         $this->assertFalse($migrationStateStorage->contains('3'));

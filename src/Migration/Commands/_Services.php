@@ -11,7 +11,7 @@ final class _Services
     {
         $kernel->add(
             ApplyAllCommand::class,
-            fn() => new ApplyAllCommand($kernel->get(CliMigratorInterface::class)),
+            fn() => new ApplyAllCommand($kernel->getObject(CliMigratorInterface::class)),
             ['cli_command']
         );
 

@@ -12,7 +12,7 @@ final class _Services
         $kernel->add(
             WebRequestErrorHandlerInterface::class,
             fn() => new WebRequestErrorHandler(
-                $kernel->get(LoggerInterface::class),
+                $kernel->getObject(LoggerInterface::class),
                 $kernel->get('config'),
             )
         );
