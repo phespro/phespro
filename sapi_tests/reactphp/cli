@@ -1,11 +1,11 @@
+#!/usr/bin/env php
 <?php
 
 use League\Route\Router;
 use Phespro\Phespro\Extensibility\AbstractExtension;
 use Phespro\Phespro\Kernel;
 
-require __DIR__ . '/vendor/autoload.php';
-
+require __DIR__ . '/../../vendor/autoload.php';
 
 
 $kernel = new Kernel([

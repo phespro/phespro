@@ -6,9 +6,13 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update && apt-get -y upgrade \
     && apt-get -y --no-install-recommends install apt-utils unzip git
 
-RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && install-php-extensions zip
+RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && install-php-extensions openswoole zip pcntl
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php \
     && php -r "unlink('composer-setup.php');" \
     && mv composer.phar /usr/bin/composer
+
+EXPOSE 8080
+ENTRYPOINT ["/usr/local/bin/php"]
+CMD ["cli", "server:run", "--host", "0.0.0.0:8080"]

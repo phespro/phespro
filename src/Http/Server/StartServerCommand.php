@@ -30,6 +30,14 @@ class StartServerCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
+        if (!extension_loaded('pcntl')) {
+            $io->error('Package pcntl not found.');
+            return self::FAILURE;
+        }
+
+
         $httpServer = new HttpServer(function(ServerRequestInterface $request) {
             return $this->kernel->handleWebRequest(false, $request);
         });
@@ -40,10 +48,14 @@ class StartServerCommand extends Command
 
         $httpServer->listen($socketServer);
 
-        $io = new SymfonyStyle($input, $output);
-
         $io->success("Server started on host http://$host");
 
+        Loop::addSignal(2, function() use ($io) {
+            $io->info('Server shutting down by command.');
+            Loop::stop();
+        });
+
         Loop::run();
+        return self::SUCCESS;
     }
 }
