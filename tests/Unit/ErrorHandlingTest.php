@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Phespro\Phespro\Tests;
+namespace Phespro\Phespro\Tests\Unit;
 
 
 use Laminas\Diactoros\ServerRequestFactory;
@@ -34,7 +34,7 @@ class ErrorHandlingTest extends TestCase
     public function test()
     {
         $kernel = new Kernel([
-            ErrorHandlerTestPlugin::class,
+            \Phespro\Phespro\Tests\ErrorHandlerTestPlugin::class,
         ]);
         $kernel->decorate('config', fn($container, $prev) => new FrameworkConfiguration(
             displayErrorDetails: true,

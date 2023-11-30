@@ -136,12 +136,6 @@ class Kernel extends Container
             return $app;
         });
 
-        $this->add(
-            StartServerCommand::class,
-            fn() => new StartServerCommand($this),
-            ['cli_command'],
-        );
-
         $this->add(LoggerInterface::class, fn() => new NullLogger);
 
         Security\_Services::register($this);

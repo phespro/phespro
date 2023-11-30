@@ -1,6 +1,6 @@
 <?php
 
-namespace Phespro\Phespro\Tests;
+namespace Phespro\Phespro\Tests\Unit;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
@@ -45,7 +45,7 @@ class ContainerActionTest extends TestCase
 {
     function test()
     {
-        $kernel = new Kernel([ContainerActionTestExtension::class]);
+        $kernel = new Kernel([\Phespro\Phespro\Tests\ContainerActionTestExtension::class]);
         $response = $kernel->handleWebRequest(
             false,
             (new ServerRequestFactory)->createServerRequest('GET', '/'),

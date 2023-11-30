@@ -1,0 +1,14 @@
+{
+  "name": "phespro/reactphp-server",
+  "description": "Enables running phespro with reactphp's http server",
+  "require": {
+    "ext-pcntl": "*",
+    "react/http": "^1.9",
+    "phespro/phespro": "*",
+  },
+  "autoload": {
+    "psr-4": {
+      "Phespro\\ReactPHPServer\\": "src/"
+    }
+  }
+}

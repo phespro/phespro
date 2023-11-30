@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Phespro\Phespro\Tests;
+namespace Phespro\Phespro\Tests\Unit;
 
 
 use Exception;

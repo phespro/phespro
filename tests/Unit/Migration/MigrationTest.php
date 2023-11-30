@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Phespro\Phespro\Tests\Migration;
+namespace Phespro\Phespro\Tests\Unit\Migration;
 
 
 use Phespro\Phespro\Kernel;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Phespro\Phespro\Tests\Security\Csrf;
+namespace Phespro\Phespro\Tests\Unit\Security\Csrf;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;

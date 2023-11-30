@@ -1,6 +1,6 @@
 <?php
 
-namespace Phespro\Phespro\Tests;
+namespace Phespro\Phespro\Tests\Unit;
 
 use Phespro\Phespro\Kernel;
 use PHPUnit\Framework\TestCase;
