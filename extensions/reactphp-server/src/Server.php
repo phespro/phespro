@@ -15,6 +15,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Server implements ServerInterface
 {
+    public function getName(): string
+    {
+        return 'ReactPHP';
+    }
+
     public function run(InputInterface $input, OutputInterface $output, ServerConfiguration $config): int
     {
         $io = new SymfonyStyle($input, $output);

@@ -18,5 +18,6 @@ final class _Services
         );
 
         Middlewares\_Services::register($kernel);
+        Server\_Services::register($kernel);
     }
 }

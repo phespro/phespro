@@ -7,5 +7,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface ServerInterface
 {
-    public function run(InputInterface $input, OutputInterface $output, ServerConfiguration $config): int;
+    public function getName(): string;
+    public function run(OutputInterface $output, ServerConfiguration $config): int;
 }

@@ -22,26 +22,39 @@ class StartServerCommand extends Command
 
     protected function configure()
     {
-        $types = array_map(fn(Type $type) => $type->value, Type::cases());
-        $types = implode(', ', $types);
-
         $this->setName('server:run');
+
+        $names = array_map(fn(ServerInterface $server) => $server->getName(), $this->server);
+        $names = implode(', ', $names);
         $this->addOption(
-            'type',
-            't',
+            'server',
+            's',
             InputOption::VALUE_REQUIRED,
-            "What type of server do you want to start? ($types)",
-            Type::PHPDEV->value,
+            "What type of server do you want to start? ($names)",
+            'PhpDevelopment',
         );
+
         $this->addOption('host', null, InputOption::VALUE_REQUIRED, 'Host: e.g. "127.0.0.1:80"', '127.0.0.1:8080');
+        $this->addOption('workers', 'w', InputOption::VALUE_REQUIRED, 'Number of workers', 1);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $type = $input->getOption('type');
-        $type = Type::from($type);
+        $serverInput = $input->getOption('server');
+        $filteredServers = array_filter($this->server, fn(ServerInterface $server) => $server->getName() === $serverInput);
 
-        $io = new SymfonyStyle($input, $output);
+        if (count($filteredServers) === 0) {
+            $io = new SymfonyStyle($input, $output);
+            $io->error("Server $serverInput not found.");
+            return self::FAILURE;
+        }
+
+        $server = $this->server[array_key_first($filteredServers)];
+
+        $server->run($output, new ServerConfiguration(
+            host: $input->getOption('host'),
+            worker: (int)$input->getOption('workers'),
+        ));
 
         return self::SUCCESS;
     }
