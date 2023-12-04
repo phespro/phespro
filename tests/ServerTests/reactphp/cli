@@ -1,30 +1,29 @@
 #!/usr/bin/env php
 <?php
 
+use Laminas\Diactoros\Response;
 use League\Route\Router;
 use Phespro\Phespro\Extensibility\AbstractExtension;
 use Phespro\Phespro\Kernel;
+use Phespro\ReactPHPServer\ReactExtension;
 
-require __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../../../vendor/autoload.php';
 
+class MyExtension extends AbstractExtension
+{
+    function bootHttp(Kernel $kernel, Router $router): void
+    {
+        $router->get('/', function () {
+            $response = new Response();
+            $response->getBody()->write('test');
+            return $response;
+        });
+    }
+}
 
 $kernel = new Kernel([
-    new class extends AbstractExtension {
-
-        function boot(Kernel $kernel): void
-        {
-            // TODO: Implement boot() method.
-        }
-
-        function bootHttp(Kernel $kernel, Router $router): void
-        {
-            $router->get('/', function() {
-                $response = new \Laminas\Diactoros\Response();
-                $response->getBody()->write('test');
-                return $response;
-            });
-        }
-
-    }
+    ReactExtension::class,
+    MyExtension::class,
 ]);
+
 $kernel->handleCli();

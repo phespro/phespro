@@ -15,4 +15,4 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/php"]
-CMD ["cli", "server:run", "--host", "0.0.0.0:8080"]
+CMD ["cli", "server:run", "--server", "ReactPHP", "--host", "0.0.0.0:8080"]

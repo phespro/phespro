@@ -104,6 +104,7 @@ class Kernel extends Container
     protected function preBoot(iterable $extensions): void
     {
         foreach($extensions as $extension) {
+            echo($extension);
             assert(is_subclass_of($extension, ExtensionInterface::class));
             $extension::preBoot($this);
         }

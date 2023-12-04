@@ -1,9 +1,10 @@
 <?php
 
-namespace Phespro\ReactPHPExtension;
+namespace Phespro\ReactPHPServer;
 
 use Phespro\Phespro\Http\Server\ServerConfiguration;
 use Phespro\Phespro\Http\Server\ServerInterface;
+use Phespro\Phespro\Kernel;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
 use React\Http\HttpServer;
@@ -13,19 +14,26 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class Server implements ServerInterface
+class ReactServer implements ServerInterface
 {
+    public function __construct(protected Kernel $kernel)
+    {
+    }
+
     public function getName(): string
     {
         return 'ReactPHP';
     }
 
-    public function run(InputInterface $input, OutputInterface $output, ServerConfiguration $config): int
+    public function run(OutputInterface $output, ServerConfiguration $config): int
     {
-        $io = new SymfonyStyle($input, $output);
-
         if (!extension_loaded('pcntl')) {
-            $io->error('Package pcntl not found.');
+            $output->writeln('<error>Package pcntl not found.</error>');
+            return Command::FAILURE;
+        }
+
+        if ($config->worker !== 1) {
+            $output->writeln('<error>More than one worker is not implemented yet for ReactPHP');
             return Command::FAILURE;
         }
 
@@ -33,16 +41,14 @@ class Server implements ServerInterface
             return $this->kernel->handleWebRequest(false, $request);
         });
 
-        $host = $input->getOption('host');
-
-        $socketServer = new SocketServer($host);
+        $socketServer = new SocketServer($config->host);
 
         $httpServer->listen($socketServer);
 
-        $io->success("Server started on host http://$host");
+        $output->writeln("<success>Server started on host http://{$config->host}</success>");
 
-        Loop::addSignal(2, function() use ($io) {
-            $io->info('Server shutting down by command.');
+        Loop::addSignal(2, function() use ($output) {
+            $output->writeln('<info>Server shutting down by command.</info>');
             Loop::stop();
         });
 

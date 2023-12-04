@@ -1,17 +1,17 @@
 <?php
 
-namespace Phespro\ReactPHPExtension;
+namespace Phespro\ReactPHPServer;
 
 use Phespro\Phespro\Extensibility\AbstractExtension;
 use Phespro\Phespro\Kernel;
 
-class ReactPHPExtension extends AbstractExtension
+class ReactExtension extends AbstractExtension
 {
     function boot(Kernel $kernel): void
     {
         $kernel->add(
-            'http.server.reactphp',
-            fn() => new Server,
+            ReactServer::class,
+            fn() => new ReactServer($kernel),
             ['http.server'],
         );
     }
