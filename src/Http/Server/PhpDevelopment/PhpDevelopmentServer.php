@@ -4,6 +4,7 @@ namespace Phespro\Phespro\Http\Server\PhpDevelopment;
 
 use Phespro\Phespro\Http\Server\ServerConfiguration;
 use Phespro\Phespro\Http\Server\ServerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +16,7 @@ class PhpDevelopmentServer implements ServerInterface
         return 'PhpDevelopment';
     }
 
-    public function run(OutputInterface $output, ServerConfiguration $config): int
+    public function run(LoggerInterface $logger): int
     {
         if (!extension_loaded('pcntl')) {
             $output->writeln('<error>Cannot start server, since ext-pcntl not loaded</error>');

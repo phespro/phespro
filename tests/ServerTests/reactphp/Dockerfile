@@ -13,6 +13,6 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "unlink('composer-setup.php');" \
     && mv composer.phar /usr/bin/composer
 
-EXPOSE 8080
+EXPOSE 80
 ENTRYPOINT ["/usr/local/bin/php"]
-CMD ["cli", "server:run", "--server", "ReactPHP", "--host", "0.0.0.0:8080"]
+CMD ["cli", "server:run", "--server", "ReactPHP", "-vvv"]

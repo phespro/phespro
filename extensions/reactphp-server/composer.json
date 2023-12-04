@@ -5,6 +5,7 @@
   "require": {
     "ext-pcntl": "*",
     "react/http": "^1.9",
+    "react/"
     "phespro/phespro": "*"
   },
   "autoload": {
