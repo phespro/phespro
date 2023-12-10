@@ -26,6 +26,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Kernel extends Container
 {
+    protected bool $httpBooted = false;
+
     /**
      * @template T of ExtensionInterface
      *
@@ -42,19 +44,9 @@ class Kernel extends Container
     function handleWebRequest(bool $emit = true, ServerRequestInterface $request = null): ResponseInterface
     {
         try {
+            $this->bootHttp();
+
             $router = $this->get('router');
-            assert($router instanceof Router);
-            foreach ($this->getByTag('extension') as $extension) {
-                assert($extension instanceof ExtensionInterface);
-                $extension->bootHttp($this, $router);
-            }
-
-            $config = $this->get('config');
-            assert($config instanceof FrameworkConfiguration);
-
-            if ($config->autoCsrfProtect) {
-                $router->middleware($this->getObject(CsrfMiddleware::class));
-            }
 
             if ($request === null) {
                 $request = ServerRequestFactory::fromGlobals(
@@ -86,11 +78,34 @@ class Kernel extends Container
      * @param OutputInterface|null $output
      * @throws Exception
      */
-    function handleCli(InputInterface $input = null, OutputInterface $output = null): void
+    public function handleCli(InputInterface $input = null, OutputInterface $output = null): void
     {
         $app = $this->get('cli_application');
         assert($app instanceof Application);
         $app->run($input, $output);
+    }
+
+    protected function bootHttp(): void
+    {
+        if ($this->httpBooted) {
+            return;
+        }
+
+        $router = $this->get('router');
+        assert($router instanceof Router);
+        foreach ($this->getByTag('extension') as $extension) {
+            assert($extension instanceof ExtensionInterface);
+            $extension->bootHttp($this, $router);
+        }
+
+        $config = $this->get('config');
+        assert($config instanceof FrameworkConfiguration);
+
+        if ($config->autoCsrfProtect) {
+            $router->middleware($this->getObject(CsrfMiddleware::class));
+        }
+
+        $this->httpBooted = true;
     }
 
     /**
